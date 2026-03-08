@@ -16,20 +16,25 @@ export default function Navbar() {
           
           {/* Logo Section */}
           <div className="flex items-center">
-            <Link href="/" onClick={closeMenu} className="flex-shrink-0 flex items-center gap-4 group">
+            {/* Reduced gap slightly on mobile so it all fits */}
+            <Link href="/" onClick={closeMenu} className="flex-shrink-0 flex items-center gap-2 sm:gap-4 group">
+              
               <div className="relative flex-shrink-0">
+                {/* Slightly smaller image on mobile (h-10 w-10) to save space */}
                 <img 
                   src="/logo.png" 
                   alt="Vraj Homeopathy Logo" 
-                  className="h-12 w-12 rounded-full object-cover border-2 border-white shadow-md group-hover:scale-110 transition-transform duration-300 group-hover:border-teal-100" 
+                  className="h-10 w-10 sm:h-12 sm:w-12 rounded-full object-cover border-2 border-white shadow-md group-hover:scale-110 transition-transform duration-300 group-hover:border-teal-100" 
                 />
               </div>
-              <span className="font-extrabold text-2xl text-white tracking-tight group-hover:scale-105 transition-transform duration-300 hidden sm:block">
+              
+              {/* REMOVED 'hidden sm:block' AND ADDED 'text-lg sm:text-2xl' */}
+              <span className="font-extrabold text-lg sm:text-2xl text-white tracking-tight group-hover:scale-105 transition-transform duration-300">
                 Vraj <span className="text-teal-400">Homeopathy</span>
               </span>
+              
             </Link>
           </div>
-
           {/* Desktop Menu (Hidden on Mobile) */}
           <div className="hidden md:flex space-x-8 items-center">
             <Link href="/" className="text-white hover:text-teal-200 font-medium transition-colors">Home</Link>
