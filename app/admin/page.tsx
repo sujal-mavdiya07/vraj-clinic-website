@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 
 export default function AdminDashboard() {
-  const [appointments, setAppointments] = useState([]);
+  const [appointments, setAppointments] = useState<any[]>([]);
   
   // Added the imageUrl with a professional health/wellness demo image
   const [blogData, setBlogData] = useState({ 
