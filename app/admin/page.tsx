@@ -64,95 +64,134 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 md:p-12">
-      <div className="max-w-6xl mx-auto space-y-12">
-        <h1 className="text-4xl font-extrabold text-teal-900">NexusNode Admin Panel</h1>
-
-        {/* Section 1: Appointments Table */}
-        <section className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-          <div className="p-6 bg-teal-600 text-white">
-            <h2 className="text-xl font-bold">Incoming Patient Appointments</h2>
+    <div className="min-h-screen bg-slate-100 p-4 md:p-8 font-sans">
+      <div className="max-w-7xl mx-auto space-y-8">
+        
+        {/* Premium Dashboard Header */}
+        <header className="bg-white rounded-2xl shadow-sm p-6 md:p-8 border-l-8 border-teal-600 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <h1 className="text-3xl md:text-4xl font-black text-black tracking-tight">Clinic Command Center</h1>
+            <p className="text-slate-900 font-medium mt-2 text-lg">Manage patient appointments and publish health articles.</p>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <thead className="bg-gray-50 text-gray-500 text-sm uppercase">
-                <tr>
-                  <th className="p-4">Patient</th>
-                  <th className="p-4">Phone</th>
-                  <th className="p-4">Date</th>
-                  <th className="p-4">Symptoms</th>
-                </tr>
-              </thead>
-              <tbody>
-                {loading ? (
-                  <tr><td colSpan={4} className="p-4 text-center">Loading appointments...</td></tr>
-                ) : !Array.isArray(appointments) || appointments.length === 0 ? (
-                  <tr><td colSpan={4} className="p-4 text-center">No appointments found.</td></tr>
-                ) : (
-                  appointments.map((app: any) => (
-                    <tr key={app._id} className="border-t border-gray-100 hover:bg-gray-50">
-                      <td className="p-4 font-semibold text-gray-900">{app.name}</td>
-                      <td className="p-4 text-gray-900">{app.phone}</td>
-                      <td className="p-4 italic text-gray-900">{app.date}</td>
-                      <td className="p-4 text-gray-600 text-sm">{app.symptoms}</td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+          <div className="bg-teal-50 border border-teal-200 px-6 py-3 rounded-xl flex items-center gap-3 shadow-inner">
+            <span className="relative flex h-3 w-3">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-teal-500"></span>
+            </span>
+            <span className="text-teal-900 font-bold text-sm tracking-wide uppercase">System Online</span>
           </div>
-        </section>
+        </header>
 
-        {/* Section 2: Create Blog Form */}
-        <section className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">Create New Blog Post</h2>
-          <form onSubmit={handleBlogSubmit} className="grid grid-cols-1 gap-6">
-            
-            {/* Title Input */}
-            <input 
-              required
-              className="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none text-gray-900" 
-              placeholder="Blog Title" 
-              value={blogData.title}
-              onChange={(e) => setBlogData({...blogData, title: e.target.value})}
-            />
-            
-            {/* NEW: Image URL Input */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Cover Image URL</label>
-              <input 
-                type="url"
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none text-gray-900" 
-                placeholder="https://example.com/image.jpg" 
-                value={blogData.imageUrl}
-                onChange={(e) => setBlogData({...blogData, imageUrl: e.target.value})}
-              />
-              <p className="text-xs text-gray-500 mt-1">Paste a link to an image from the web (e.g., Unsplash, Pexels).</p>
+        {/* Main Grid Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          
+          {/* LEFT COLUMN: Appointments (Takes up 7 columns on big screens) */}
+          <section className="lg:col-span-7 bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden flex flex-col">
+            <div className="bg-slate-900 p-6">
+              <h2 className="text-2xl font-black text-white flex items-center gap-3">
+                <span>📅</span> Patient Appointments
+              </h2>
             </div>
+            
+            <div className="p-6 flex-1 overflow-y-auto bg-white">
+              {appointments.length === 0 ? (
+                <div className="text-center py-12 bg-slate-50 rounded-xl border-2 border-dashed border-slate-300">
+                  <p className="text-black font-bold text-lg">No appointments booked yet.</p>
+                  <p className="text-slate-900 mt-1">When patients fill out the form, they will appear here.</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {appointments.map((appt, index) => (
+                    <div key={index} className="bg-white border-2 border-slate-200 rounded-xl p-5 hover:border-teal-500 hover:shadow-lg transition-all duration-200">
+                      <div className="flex justify-between items-start border-b-2 border-slate-100 pb-3 mb-3">
+                        <h3 className="text-xl font-black text-black">{appt.name}</h3>
+                        <span className="bg-slate-100 text-black font-bold px-3 py-1 rounded-md text-sm border border-slate-300 shadow-sm">
+                          {appt.date}
+                        </span>
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-black font-bold flex items-center gap-2">
+                          <span className="text-teal-700">📞 Phone:</span> {appt.phone}
+                        </p>
+                        <div className="bg-slate-50 p-3 rounded-lg border border-slate-200 mt-3">
+                          <p className="text-black font-bold text-sm mb-1 uppercase tracking-wider text-teal-800">Symptoms / Notes:</p>
+                          <p className="text-black font-medium leading-relaxed">{appt.symptoms || "No symptoms provided."}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </section>
 
-            {/* Excerpt Input */}
-            <textarea 
-              required
-              className="p-3 border border-gray-300 rounded-lg h-32 focus:ring-2 focus:ring-teal-500 outline-none text-gray-900" 
-              placeholder="Short Excerpt (shows on home page)"
-              value={blogData.excerpt}
-              onChange={(e) => setBlogData({...blogData, excerpt: e.target.value})}
-            />
+          {/* RIGHT COLUMN: Blog Publisher (Takes up 5 columns on big screens) */}
+          <section className="lg:col-span-5 bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden flex flex-col">
+            <div className="bg-teal-700 p-6">
+              <h2 className="text-2xl font-black text-white flex items-center gap-3">
+                <span>✍️</span> Publish Article
+              </h2>
+            </div>
             
-            {/* Content Input */}
-            <textarea 
-              required
-              className="p-3 border border-gray-300 rounded-lg h-64 focus:ring-2 focus:ring-teal-500 outline-none text-gray-900" 
-              placeholder="Full Blog Content"
-              value={blogData.content}
-              onChange={(e) => setBlogData({...blogData, content: e.target.value})}
-            />
-            
-            <button type="submit" className="bg-teal-600 text-white font-bold py-3 rounded-lg hover:bg-teal-700 transition shadow-md">
-              Publish to Website
-            </button>
-          </form>
-        </section>
+            <form onSubmit={handleBlogSubmit} className="p-6 space-y-6 bg-white">
+              
+              <div className="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                <label className="block text-black font-black mb-2 text-lg">Blog Title</label>
+                <input 
+                  required
+                  className="w-full p-4 border-2 border-slate-300 rounded-xl text-black font-medium focus:border-teal-600 focus:ring-0 outline-none transition-colors" 
+                  placeholder="e.g., 5 Natural Remedies for Winter Colds" 
+                  value={blogData.title}
+                  onChange={(e) => setBlogData({...blogData, title: e.target.value})}
+                />
+              </div>
+
+              <div className="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                <label className="block text-black font-black mb-2 text-lg">Cover Image Link</label>
+                <input 
+                  type="url"
+                  className="w-full p-4 border-2 border-slate-300 rounded-xl text-black font-medium focus:border-teal-600 focus:ring-0 outline-none transition-colors" 
+                  placeholder="Paste an image URL here..." 
+                  value={blogData.imageUrl}
+                  onChange={(e) => setBlogData({...blogData, imageUrl: e.target.value})}
+                />
+              </div>
+              
+              <div className="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                <label className="block text-black font-black mb-2 text-lg">Short Summary</label>
+                <textarea 
+                  required
+                  className="w-full p-4 border-2 border-slate-300 rounded-xl text-black font-medium h-24 focus:border-teal-600 focus:ring-0 outline-none transition-colors" 
+                  placeholder="Write 2-3 sentences summarizing the blog..."
+                  value={blogData.excerpt}
+                  onChange={(e) => setBlogData({...blogData, excerpt: e.target.value})}
+                />
+              </div>
+              
+              <div className="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                <div className="flex flex-col sm:flex-row justify-between sm:items-end mb-2 gap-2">
+                  <label className="block text-black font-black text-lg">Full Article Content</label>
+                  <span className="text-xs text-black font-bold bg-amber-100 border border-amber-300 px-3 py-1.5 rounded-md shadow-sm">
+                    Press Enter twice for new paragraphs
+                  </span>
+                </div>
+                <textarea 
+                  required
+                  className="w-full p-4 border-2 border-slate-300 rounded-xl text-black font-medium h-80 focus:border-teal-600 focus:ring-0 outline-none leading-relaxed transition-colors" 
+                  placeholder="Write your full article here..."
+                  value={blogData.content}
+                  onChange={(e) => setBlogData({...blogData, content: e.target.value})}
+                />
+              </div>
+              
+              <button type="submit" className="w-full bg-black text-white text-xl font-black py-5 rounded-xl hover:bg-teal-700 transition-colors shadow-xl flex justify-center items-center gap-2">
+                🚀 Publish to Live Website
+              </button>
+
+            </form>
+          </section>
+
+        </div>
       </div>
     </div>
   );
