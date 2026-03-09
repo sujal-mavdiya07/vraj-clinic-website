@@ -63,6 +63,29 @@ export default function AdminDashboard() {
     }
   };
 
+  // THE NEW DELETE FUNCTION
+  const handleDeleteAppointment = async (id: string) => {
+    // 1. The Safety Check
+    if (!window.confirm("Are you sure you want to delete this appointment? This cannot be undone.")) {
+      return; 
+    }
+
+    try {
+      // 2. Send the delete request to our new API
+      const res = await fetch(`/api/contact/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (res.ok) {
+        // 3. Remove it from the screen instantly without needing to refresh the page!
+        setAppointments(appointments.filter((appt) => appt._id !== id));
+      } else {
+        alert("Failed to delete the appointment.");
+      }
+    } catch (error) {
+      console.error("Error deleting:", error);
+    }
+  };
   return (
     <div className="min-h-screen bg-slate-100 p-4 md:p-8 font-sans">
       <div className="max-w-7xl mx-auto space-y-8">
@@ -104,10 +127,22 @@ export default function AdminDashboard() {
                   {appointments.map((appt, index) => (
                     <div key={index} className="bg-white border-2 border-slate-200 rounded-xl p-5 hover:border-teal-500 hover:shadow-lg transition-all duration-200">
                       <div className="flex justify-between items-start border-b-2 border-slate-100 pb-3 mb-3">
-                        <h3 className="text-xl font-black text-black">{appt.name}</h3>
-                        <span className="bg-slate-100 text-black font-bold px-3 py-1 rounded-md text-sm border border-slate-300 shadow-sm">
-                          {appt.date}
-                        </span>
+                        
+                        <div>
+                          <h3 className="text-xl font-black text-black">{appt.name}</h3>
+                          <span className="inline-block mt-1 bg-slate-100 text-black font-bold px-3 py-1 rounded-md text-sm border border-slate-300 shadow-sm">
+                            {appt.date}
+                          </span>
+                        </div>
+
+                        {/* THE NEW DELETE BUTTON */}
+                        <button 
+                          onClick={() => handleDeleteAppointment(appt._id)}
+                          className="bg-red-50 text-red-600 border border-red-200 hover:bg-red-600 hover:text-white font-bold px-3 py-2 rounded-lg text-sm transition-colors shadow-sm flex items-center gap-1"
+                        >
+                          🗑️ Delete
+                        </button>
+
                       </div>
                       <div className="space-y-2">
                         <p className="text-black font-bold flex items-center gap-2">
