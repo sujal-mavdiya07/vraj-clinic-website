@@ -60,7 +60,7 @@ export default function AdminDashboard() {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     // Change "Vraj@Admin" to whatever secret password you want!
-    if (passwordInput === "Vraj@Admin") {
+    if (passwordInput === "vraj2026") {
       setIsAuthenticated(true);
       setLoginError(false);
     } else {
