@@ -37,12 +37,19 @@ export const metadata: Metadata = {
   
   // 4. Agency Credit for NexusNode
   authors: [{ name: "NexusNode" }],
+
+  // ==========================================
+  // ADD YOUR GOOGLE VERIFICATION HERE
+  // ==========================================
+  verification: {
+    google: "JHaN36YSXoqe9AATAe8fElsHr2vaXv1BU3sL0Dri5fU",
+  },
   
   // 5. OpenGraph (What shows up when shared on WhatsApp, Facebook, LinkedIn)
   openGraph: {
     title: "Vraj Homeopathic Clinic | Ahmedabad",
     description: "Expert homeopathic care in Ahmedabad. Natural, holistic, and personalized treatments.",
-    url: "https://your-future-domain.com", // You will update this later when buying a domain
+    url: "https://drshrutivanpariya.in", // <-- I updated this to your live domain!
     siteName: "Vraj Homeopathy",
     images: [
       {
