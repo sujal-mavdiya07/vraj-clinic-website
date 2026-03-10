@@ -47,8 +47,8 @@ export const metadata: Metadata = {
   
   // 5. OpenGraph (What shows up when shared on WhatsApp, Facebook, LinkedIn)
   openGraph: {
-    title: "Vraj Homeopathic Clinic | Ahmedabad",
-    description: "Expert homeopathic care in Ahmedabad. Natural, holistic, and personalized treatments.",
+    title: "Vraj Homeopathic Clinic | Keshod",
+    description: "Expert homeopathic care in Keshod, Junagadh. Natural, holistic, and personalized treatments.",
     url: "https://drshrutivanpariya.in", // <-- I updated this to your live domain!
     siteName: "Vraj Homeopathy",
     images: [
