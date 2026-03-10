@@ -51,7 +51,7 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-3 hover:text-teal-100 transition-colors">
                 <span className="text-xl">✉️</span> 
-                <span>[Clinic Email Address]</span>
+                <span>vanapariyashruti111@gmail.com</span>
               </li>
               <li className="pt-4 border-t border-gray-800">
                 <span className="block text-teal-400 font-bold mb-1">Opening Hours:</span>

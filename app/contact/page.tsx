@@ -63,7 +63,7 @@ export default function ContactPage() {
           <div className="space-y-6 text-gray-700">
             <p className="flex items-center"><span className="text-2xl mr-4">📍</span> Amrut Nagar Main Rd, Keshod, Gujarat 362220</p>
             <p className="flex items-center"><span className="text-2xl mr-4">📞</span> +91 6354380556</p>
-            <p className="flex items-center"><span className="text-2xl mr-4">✉️</span> [Clinic Email Address]</p>
+            <p className="flex items-center"><span className="text-2xl mr-4">✉️</span> vanapariyashruti111@gmail.com</p>
             
             <div className="pt-6 mt-6 border-t border-teal-200">
               <h3 className="font-semibold text-teal-800 mb-2">Clinic Hours</h3>
