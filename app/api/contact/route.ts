@@ -15,6 +15,8 @@ export async function POST(req: Request) {
       phone: body.phone,
       date: body.date,
       symptoms: body.symptoms || "None provided",
+      // ADDED THIS LINE:
+      consultationType: body.consultationType || "In-Clinic",
     });
 
     return NextResponse.json({ success: true, appointment: newAppointment }, { status: 201 });

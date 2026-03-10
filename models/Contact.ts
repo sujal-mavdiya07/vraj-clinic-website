@@ -18,6 +18,13 @@ const contactSchema = new Schema({
     type: String,
     required: [true, 'Symptoms description is required'],
   },
+  
+  // THE NEW FIELD: This tells MongoDB it is officially allowed to save this data
+  consultationType: {
+    type: String,
+    default: 'In-Clinic',
+  },
+  
   createdAt: {
     type: Date,
     default: Date.now,

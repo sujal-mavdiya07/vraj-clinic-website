@@ -30,7 +30,7 @@ export default function AboutSection() {
           </h2>
           <div className="space-y-6 text-lg text-gray-600 leading-relaxed mb-8">
             <p>
-              At Vraj Homeopathic Clinic, Dr. Shruti is dedicated to providing compassionate, individualized care. She believes in treating the whole person—mind, body, and spirit—to achieve lasting health and vitality without harsh side effects.
+              At Vraj Homeopathic Clinic, Dr. Shruti is dedicated to providing compassionate, individualized care. She believes in treating the whole person mind, body, and spirit to achieve lasting health and vitality without harsh side effects.
             </p>
             <p>
               With a deep understanding of natural homeopathic remedies, she specializes in chronic conditions, women's health, and pediatric care, ensuring every patient receives a completely tailored treatment plan.
