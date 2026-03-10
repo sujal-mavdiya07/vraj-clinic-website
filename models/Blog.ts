@@ -4,12 +4,12 @@ const blogSchema = new Schema({
   title: { type: String, required: true },
   excerpt: { type: String, required: true },
   content: { type: String, required: true },
-  category: { type: String, required: true },
-  readTime: { type: String, required: true },
-  date: { type: String, default: () => new Date().toLocaleDateString() },
-  imageUrl: { type: String, default: "/blog-placeholder.jpg" },
+  imageUrl: { type: String },
+  category: { type: String, default: 'General' },
+  readTime: { type: String, default: '5 min' },
+}, { 
+  timestamps: true 
 });
 
-// This tells Mongoose to look for the "blogs" collection in your database
 const Blog = models.Blog || mongoose.model('Blog', blogSchema);
 export default Blog;
