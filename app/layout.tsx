@@ -17,16 +17,16 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   // 1. The Title (Shows up in the Google Search tab)
   title: {
-    default: "Vraj Homeopathic Clinic | Dr. Shruti Vanpariya | Ahmedabad",
+    default: "Vraj Homeopathic Clinic | Dr. Shruti Vanpariya | Keshod",
     template: "%s | Vraj Homeopathy", 
   },
   
   // 2. The Description (The short paragraph under the Google Search link)
-  description: "Expert homeopathic care in Ahmedabad with Dr. Shruti Vanpariya. Natural, holistic, and personalized treatments for your complete well-being.",
+  description: "Expert homeopathic care in Keshod with Dr. Shruti Vanpariya. Natural, holistic, and personalized treatments for your complete well-being.",
   
   // 3. Keywords (What people are actually typing into Google)
   keywords: [
-    "Homeopathic clinic Ahmedabad", 
+    "Homeopathic clinic Keshod", 
     "Dr. Shruti Vanpariya", 
     "Best homeopath near me", 
     "Natural medicine Gujarat", 
