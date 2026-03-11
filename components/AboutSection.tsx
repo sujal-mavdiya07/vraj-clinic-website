@@ -1,6 +1,30 @@
+"use client";
+
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 export default function AboutSection() {
+  // 1. State to hold the dynamic image URL (with your local file as the default fallback)
+  const [doctorImage, setDoctorImage] = useState('/dr-shruti.jpg'); 
+
+  // 2. Fetch the live image URL from the database when the component loads
+  useEffect(() => {
+    const fetchDoctorImage = async () => {
+      try {
+        const res = await fetch('/api/settings');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.doctorProfileUrl) {
+            setDoctorImage(data.doctorProfileUrl);
+          }
+        }
+      } catch (error) {
+        console.error("Could not load dynamic doctor profile image");
+      }
+    };
+    fetchDoctorImage();
+  }, []);
+
   return (
     <section className="py-20 sm:py-32 bg-slate-50 relative overflow-hidden">
       {/* Decorative background blob */}
@@ -15,9 +39,9 @@ export default function AboutSection() {
             <div className="absolute inset-0 bg-teal-400 rounded-full blur-lg opacity-20 group-hover:opacity-40 group-hover:scale-110 transition-all duration-700"></div>
             <div className="relative w-64 h-64 md:w-80 md:h-80 bg-white rounded-full shadow-2xl flex items-center justify-center overflow-hidden border-8 border-white group-hover:border-teal-50 transition-colors duration-500">
               <img
-                src="/dr-shruti.jpg"
+                src={doctorImage} // <--- Now uses the dynamic database image!
                 alt="Dr. Shruti Vanpariya"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover transition-opacity duration-500"
               />
             </div>
           </div>

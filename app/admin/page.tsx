@@ -9,12 +9,16 @@ export default function AdminDashboard() {
   const [loginError, setLoginError] = useState(false);
 
   // --- DASHBOARD STATE ---
-  const [activeTab, setActiveTab] = useState<'appointments' | 'articles'>('appointments');
+  const [activeTab, setActiveTab] = useState<'appointments' | 'articles' | 'profile'>('appointments');
   const [appointments, setAppointments] = useState<any[]>([]);
   const [blogs, setBlogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
   
+  // --- DOCTOR PROFILE STATE ---
+  const [doctorImageUrl, setDoctorImageUrl] = useState('/doctor.jpg');
+  const [isUploadingDoctor, setIsUploadingDoctor] = useState(false);
+
   const [blogData, setBlogData] = useState({ 
     title: '', excerpt: '', content: '', category: 'General', readTime: '5 min', imageUrl: '' 
   });
@@ -31,8 +35,21 @@ export default function AdminDashboard() {
     if (isAuthenticated) {
       fetchAppointments();
       fetchBlogs();
+      fetchSettings(); // Fetch dynamic doctor image URL
     }
   }, [isAuthenticated]);
+
+  async function fetchSettings() {
+    try {
+      const res = await fetch('/api/settings');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.doctorProfileUrl) setDoctorImageUrl(data.doctorProfileUrl);
+      }
+    } catch (error) {
+      console.error("Error fetching settings:", error);
+    }
+  }
 
   async function fetchAppointments() {
     try {
@@ -56,10 +73,54 @@ export default function AdminDashboard() {
     }
   }
 
+  // --- DOCTOR PROFILE UPLOAD HANDLER ---
+  const handleDoctorImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploadingDoctor(true);
+    showToast("Uploading profile image...", "success");
+
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+      const res = await fetch(`https://api.imgbb.com/1/upload?key=05b08b2c27598b33b2ec61001fdc2d1a`, {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await res.json();
+      
+      if (data.success) {
+        const newUrl = data.data.url;
+        setDoctorImageUrl(newUrl); // Update state instantly
+
+        // Save new URL to MongoDB Settings
+        const dbRes = await fetch('/api/settings', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ doctorProfileUrl: newUrl }),
+        });
+
+        if (dbRes.ok) {
+          showToast("Doctor Profile image updated successfully!");
+        } else {
+          showToast("Failed to save image to database.", "error");
+        }
+      } else {
+        showToast("Failed to upload image.", "error");
+      }
+    } catch (error) {
+      console.error("Upload error:", error);
+      showToast("Error connecting to image server.", "error");
+    } finally {
+      setIsUploadingDoctor(false);
+    }
+  };
+
   // --- LOGIN HANDLER ---
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    // Change "Vraj@Admin" to whatever secret password you want!
     if (passwordInput === "vraj2026") {
       setIsAuthenticated(true);
       setLoginError(false);
@@ -69,63 +130,6 @@ export default function AdminDashboard() {
     }
   };
 
-  // ==========================================
-  // 1. THE LOGIN SCREEN (Shows if not logged in)
-  // ==========================================
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4 relative overflow-hidden">
-        {/* Background Glow */}
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-teal-500/20 rounded-full blur-[100px] pointer-events-none"></div>
-        
-        <div className="bg-slate-900/80 backdrop-blur-xl border border-slate-800 p-8 rounded-2xl shadow-2xl w-full max-w-md relative z-10">
-          <div className="flex justify-center mb-6">
-            <div className="bg-teal-500/20 p-4 rounded-full border border-teal-500/30 text-teal-400">
-              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-            </div>
-          </div>
-          <h1 className="text-2xl font-black text-white text-center mb-2 tracking-wide">Restricted Access</h1>
-          <p className="text-slate-400 text-center text-sm font-medium mb-8">Please enter the master password to access the NexusPortal.</p>
-          
-          <form onSubmit={handleLogin} className="space-y-5">
-            <div>
-              <input 
-                type="password" 
-                value={passwordInput}
-                onChange={(e) => setPasswordInput(e.target.value)}
-                placeholder="Enter password..."
-                className={`w-full bg-slate-950 border ${loginError ? 'border-red-500 focus:ring-red-500' : 'border-slate-700 focus:ring-teal-500'} text-white px-4 py-3 rounded-lg outline-none focus:ring-2 transition-all text-center font-bold tracking-widest`}
-                autoFocus
-              />
-              {loginError && <p className="text-red-400 text-xs font-bold text-center mt-2 mt-2">Incorrect password. Access denied.</p>}
-            </div>
-            <button type="submit" className="w-full bg-teal-600 hover:bg-teal-500 text-white font-black py-3 rounded-lg transition-colors shadow-lg hover:shadow-teal-500/25">
-              Unlock Dashboard
-            </button>
-          </form>
-          <div className="mt-8 text-center border-t border-slate-800 pt-6">
-            <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">Secured by NexusNode</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // ==========================================
-  // 2. THE LOADING SCREEN (Shows while fetching data)
-  // ==========================================
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <div className="flex flex-col items-center gap-3">
-          <svg className="animate-spin h-8 w-8 text-teal-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-          <div className="text-teal-800 font-bold tracking-wide">Loading System...</div>
-        </div>
-      </div>
-    );
-  }
-
-  // THE REST OF YOUR EXISTING DASHBOARD FUNCTIONS...
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -222,7 +226,62 @@ export default function AdminDashboard() {
   };
 
   // ==========================================
-  // 3. THE ACTUAL DASHBOARD (Shows only after password)
+  // 1. THE LOGIN SCREEN
+  // ==========================================
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4 relative overflow-hidden">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-teal-500/20 rounded-full blur-[100px] pointer-events-none"></div>
+        
+        <div className="bg-slate-900/80 backdrop-blur-xl border border-slate-800 p-8 rounded-2xl shadow-2xl w-full max-w-md relative z-10">
+          <div className="flex justify-center mb-6">
+            <div className="bg-teal-500/20 p-4 rounded-full border border-teal-500/30 text-teal-400">
+              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+            </div>
+          </div>
+          <h1 className="text-2xl font-black text-white text-center mb-2 tracking-wide">Restricted Access</h1>
+          <p className="text-slate-400 text-center text-sm font-medium mb-8">Please enter the master password to access the NexusPortal.</p>
+          
+          <form onSubmit={handleLogin} className="space-y-5">
+            <div>
+              <input 
+                type="password" 
+                value={passwordInput}
+                onChange={(e) => setPasswordInput(e.target.value)}
+                placeholder="Enter password..."
+                className={`w-full bg-slate-950 border ${loginError ? 'border-red-500 focus:ring-red-500' : 'border-slate-700 focus:ring-teal-500'} text-white px-4 py-3 rounded-lg outline-none focus:ring-2 transition-all text-center font-bold tracking-widest`}
+                autoFocus
+              />
+              {loginError && <p className="text-red-400 text-xs font-bold text-center mt-2">Incorrect password. Access denied.</p>}
+            </div>
+            <button type="submit" className="w-full bg-teal-600 hover:bg-teal-500 text-white font-black py-3 rounded-lg transition-colors shadow-lg hover:shadow-teal-500/25">
+              Unlock Dashboard
+            </button>
+          </form>
+          <div className="mt-8 text-center border-t border-slate-800 pt-6">
+            <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">Secured by NexusNode</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ==========================================
+  // 2. THE LOADING SCREEN 
+  // ==========================================
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="flex flex-col items-center gap-3">
+          <svg className="animate-spin h-8 w-8 text-teal-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+          <div className="text-teal-800 font-bold tracking-wide">Loading System...</div>
+        </div>
+      </div>
+    );
+  }
+
+  // ==========================================
+  // 3. THE ACTUAL DASHBOARD 
   // ==========================================
   return (
     <div className="min-h-screen bg-slate-50 font-sans pb-12">
@@ -254,28 +313,34 @@ export default function AdminDashboard() {
                 <p className="text-sm font-bold text-slate-900">Dr. Shruti Vanpariya</p>
                 <p className="text-xs font-bold text-teal-600 uppercase tracking-wider">Administrator</p>
               </div>
-              {/* Added a quick Logout button here */}
               <button onClick={() => setIsAuthenticated(false)} className="h-10 px-4 bg-slate-100 rounded-lg border border-slate-200 flex items-center justify-center text-slate-600 font-bold shadow-sm hover:bg-slate-200 transition-colors text-sm">
                 Lock 🔒
               </button>
             </div>
           </div>
 
-          {/* Tab Navigation */}
-          <div className="flex space-x-8 mt-2">
+          {/* Tab Navigation - ADDED PROFILE TAB */}
+          <div className="flex space-x-8 mt-2 overflow-x-auto">
             <button 
               onClick={() => setActiveTab('appointments')}
-              className={`pb-3 text-sm font-bold border-b-2 transition-all flex items-center gap-2 ${activeTab === 'appointments' ? 'border-teal-600 text-teal-800' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'}`}
+              className={`pb-3 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap ${activeTab === 'appointments' ? 'border-teal-600 text-teal-800' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'}`}
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
               Patient Roster
             </button>
             <button 
               onClick={() => setActiveTab('articles')}
-              className={`pb-3 text-sm font-bold border-b-2 transition-all flex items-center gap-2 ${activeTab === 'articles' ? 'border-teal-600 text-teal-800' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'}`}
+              className={`pb-3 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap ${activeTab === 'articles' ? 'border-teal-600 text-teal-800' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'}`}
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10l6 6v10a2 2 0 01-2 2z"></path></svg>
               Content Manager
+            </button>
+            <button 
+              onClick={() => setActiveTab('profile')}
+              className={`pb-3 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap ${activeTab === 'profile' ? 'border-teal-600 text-teal-800' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'}`}
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+              Doctor Profile
             </button>
           </div>
         </div>
@@ -535,6 +600,41 @@ export default function AdminDashboard() {
                     </div>
                   ))
                 )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ==================== DOCTOR PROFILE TAB ==================== */}
+        {activeTab === 'profile' && (
+          <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 mb-12">
+            <h2 className="text-xl font-bold text-slate-800 mb-6 border-b pb-4">Doctor Profile Settings</h2>
+            
+            <div className="flex flex-col md:flex-row items-center gap-8">
+              {/* Profile Image Preview */}
+              <div className="w-40 h-40 bg-slate-50 border-2 border-dashed border-slate-300 rounded-full flex items-center justify-center overflow-hidden shadow-inner">
+                <img src={doctorImageUrl} alt="Dr. Shruti Profile" className="w-full h-full object-cover" />
+              </div>
+
+              {/* Upload Interface */}
+              <div className="flex-1 w-full">
+                <label className="block text-sm font-black text-slate-700 uppercase tracking-wider mb-3">
+                  Update Headshot Photo
+                </label>
+                <input 
+                  type="file" 
+                  accept="image/*"
+                  onChange={handleDoctorImageUpload}
+                  disabled={isUploadingDoctor}
+                  className="block w-full text-sm text-slate-500
+                    file:mr-4 file:py-3 file:px-6
+                    file:rounded-lg file:border-0
+                    file:text-sm file:font-bold
+                    file:bg-teal-50 file:text-teal-700
+                    hover:file:bg-teal-100 cursor-pointer disabled:opacity-50 border border-slate-200 rounded-lg p-2"
+                />
+                {isUploadingDoctor && <p className="text-sm text-teal-600 mt-3 font-bold animate-pulse">Uploading securely to database...</p>}
+                <p className="text-xs text-slate-400 mt-4">This photo will be displayed on the website where your profile is featured.</p>
               </div>
             </div>
           </div>

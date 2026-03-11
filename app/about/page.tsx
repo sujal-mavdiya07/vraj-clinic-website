@@ -1,12 +1,40 @@
+"use client";
+
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
+// NOTE: Next.js does not allow exporting metadata from a Client Component.
+// To keep your SEO perfectly intact, simply create a file at `app/about/layout.tsx`
+// and paste this metadata block inside it.
+/*
+export const metadata = {
   title: "Meet Dr. Shruti Vanpariya",
   description: "Read about Dr. Shruti's qualifications, her homeopathic healing philosophy, and her dedication to natural patient care in Gujarat.",
 };
+*/
+
 export default function AboutDoctorPage() {
+  // 1. State to hold the dynamic image URL (with your local file as the default fallback)
+  const [doctorImage, setDoctorImage] = useState('/dr-shruti.jpg'); 
+
+  // 2. Fetch the live image URL from the database when the page loads
+  useEffect(() => {
+    const fetchDoctorImage = async () => {
+      try {
+        const res = await fetch('/api/settings');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.doctorProfileUrl) {
+            setDoctorImage(data.doctorProfileUrl);
+          }
+        }
+      } catch (error) {
+        console.error("Could not load dynamic doctor profile image");
+      }
+    };
+    fetchDoctorImage();
+  }, []);
+
   return (
     <div className="min-h-screen bg-white">
       
@@ -36,10 +64,10 @@ export default function AboutDoctorPage() {
               {/* Actual Image */}
               <div className="absolute inset-0 bg-gray-200 rounded-3xl border-4 border-white shadow-xl flex items-center justify-center overflow-hidden z-10 text-center">
                 <img 
-  src="/dr-shruti.jpg" 
-  alt="Dr. Shruti Vanpariya" 
-  className="w-full h-full object-cover"
-/>
+                  src={doctorImage} 
+                  alt="Dr. Shruti Vanpariya" 
+                  className="w-full h-full object-cover transition-opacity duration-500"
+                />
               </div>
             </div>
             
