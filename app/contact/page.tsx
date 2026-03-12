@@ -74,8 +74,8 @@ export default function ContactPage() {
 
             <div className="pt-6 mt-6 border-t border-teal-200">
               <h3 className="font-semibold text-teal-800 mb-2">Clinic Hours</h3>
-              <p>Monday - Saturday: 10:00 AM - 8:00 PM</p>
-              <p className="text-red-500 font-medium mt-1">Sunday: Half Day</p>
+              <p>Mon - Sat: 9:30 AM - 1:00 PM & 4:00 PM - 8:00 PM</p>
+              <p className="text-red-500 font-medium mt-1">Sunday: By Appointment Only</p>
             </div>
 
             {/* REAL GOOGLE MAP */}

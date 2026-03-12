@@ -58,7 +58,7 @@ export default function Footer() {
               </li>
               <li className="pt-4 mt-2 border-t border-slate-800">
                 <span className="block text-teal-400 font-bold mb-1 tracking-wide">Opening Hours:</span>
-                Mon - Sat: 10:00 AM - 8:00 PM
+                Mon - Sat: 9:30 AM - 1:00 PM & 4:00 PM - 8:00 PM
               </li>
             </ul>
           </div>
