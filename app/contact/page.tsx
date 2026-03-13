@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { motion, Variants } from "framer-motion";
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -40,37 +41,73 @@ export default function ContactPage() {
     }
   };
 
+  // --- Animation Variants ---
+  const headerVariants: Variants = {
+    hidden: { opacity: 0, y: -20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+  };
+
+  const slideLeft: Variants = {
+    hidden: { opacity: 0, x: -50 },
+    visible: { opacity: 1, x: 0, transition: { duration: 0.8, ease: "easeOut" } }
+  };
+
+  const slideRight: Variants = {
+    hidden: { opacity: 0, x: 50 },
+    visible: { opacity: 1, x: 0, transition: { duration: 0.8, ease: "easeOut", delay: 0.2 } }
+  };
+
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 overflow-hidden">
 
       {/* Page Header */}
-      <div className="text-center mb-16">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">Contact & Book an Appointment</h1>
+      <motion.div 
+        initial="hidden"
+        animate="visible"
+        variants={headerVariants}
+        className="text-center mb-16"
+      >
+        <h1 className="text-4xl font-extrabold text-gray-900 mb-4 tracking-tight">
+          {/* ✨ THE PREMIUM SHEEN EFFECT ✨ */}
+          <motion.span
+            className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-teal-600 via-teal-300 to-teal-600 bg-[length:200%_auto]"
+            animate={{ backgroundPosition: ["0% center", "200% center"] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+          >
+            Contact & Book
+          </motion.span>{" "}
+          an Appointment
+        </h1>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
           Ready to start your journey to natural health? Reach out to us or schedule your consultation with Dr. Shruti Vanpariya today.
         </p>
-      </div>
+      </motion.div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
 
         {/* Left Side: Clinic Information */}
-        <div className="bg-teal-50 rounded-2xl p-8 h-full border border-teal-100">
+        <motion.div 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+          variants={slideLeft}
+          className="bg-teal-50 rounded-2xl p-8 h-full border border-teal-100 shadow-sm hover:shadow-md transition-shadow duration-300"
+        >
           <h2 className="text-2xl font-bold text-teal-800 mb-6">Clinic Information</h2>
           <div className="space-y-6 text-gray-700">
 
-            {/* NEW PREMIUM SVG ICONS */}
-            <p className="flex items-start">
+            <motion.p whileHover={{ x: 5 }} className="flex items-start transition-transform cursor-default">
               <svg className="w-6 h-6 text-teal-600 mr-4 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
               <span>Amrut Nagar Main Rd, Keshod, Gujarat 362220</span>
-            </p>
-            <p className="flex items-center">
+            </motion.p>
+            <motion.p whileHover={{ x: 5 }} className="flex items-center transition-transform cursor-default">
               <svg className="w-6 h-6 text-teal-600 mr-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
               <span>+91 6354380556</span>
-            </p>
-            <p className="flex items-center">
+            </motion.p>
+            <motion.p whileHover={{ x: 5 }} className="flex items-center transition-transform cursor-default">
               <svg className="w-6 h-6 text-teal-600 mr-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
               <span>vrajhomeopathicclinic@gmail.com</span>
-            </p>
+            </motion.p>
 
             <div className="pt-6 mt-6 border-t border-teal-200">
               <h3 className="font-semibold text-teal-800 mb-2">Clinic Hours</h3>
@@ -87,23 +124,39 @@ export default function ContactPage() {
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade">
               </iframe>
+              <motion.div 
+                className="absolute inset-0 bg-teal-900/10 pointer-events-none"
+                whileHover={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+              />
             </div>
 
           </div>
-        </div>
+        </motion.div>
 
         {/* Right Side: Appointment Form UI */}
-        <div id="booking-section" className="bg-teal-50 rounded-2xl p-8 shadow-xl border border-teal-100 scroll-mt-24 h-full">
+        <motion.div 
+          id="booking-section" 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+          variants={slideRight}
+          className="bg-teal-50 rounded-2xl p-8 shadow-xl border border-teal-100 scroll-mt-24 h-full"
+        >
           <h2 className="text-2xl font-bold text-teal-800 mb-6">Request an Appointment</h2>
 
           {status === "success" ? (
-            <div className="bg-green-50 text-green-800 p-6 rounded-lg border border-green-200 text-center">
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="bg-green-50 text-green-800 p-6 rounded-lg border border-green-200 text-center"
+            >
               <h3 className="text-xl font-bold mb-2">Request Sent Successfully!</h3>
               <p>Thank you. The clinic will contact you shortly to confirm your appointment time.</p>
               <button onClick={() => setStatus("idle")} className="mt-4 text-teal-600 font-semibold hover:underline">
                 Book another appointment
               </button>
-            </div>
+            </motion.div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-5">
 
@@ -113,7 +166,7 @@ export default function ContactPage() {
                   id="consultationType"
                   value={formData.consultationType}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 bg-teal-50/30 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500 outline-none transition-colors text-gray-900 font-medium cursor-pointer"
+                  className="w-full px-4 py-3 bg-teal-50/30 border border-teal-200 rounded-md focus:ring-teal-500 focus:border-teal-500 outline-none transition-colors text-gray-900 font-medium cursor-pointer"
                 >
                   <option value="In-Clinic">In-Clinic Visit</option>
                   <option value="Online">Online Consultation</option>
@@ -145,16 +198,18 @@ export default function ContactPage() {
                 <p className="text-red-500 text-sm font-medium">Something went wrong. Please check your terminal.</p>
               )}
 
-              <button
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 type="submit"
                 disabled={status === "submitting"}
                 className="w-full bg-teal-600 text-white font-bold py-3 px-4 rounded-md hover:bg-teal-700 transition-colors mt-4 shadow-md text-lg disabled:bg-gray-400"
               >
                 {status === "submitting" ? "Sending..." : "Submit Request"}
-              </button>
+              </motion.button>
             </form>
           )}
-        </div>
+        </motion.div>
 
       </div>
     </div>

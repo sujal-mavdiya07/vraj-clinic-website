@@ -4,8 +4,6 @@ import Link from 'next/link';
 import { motion, Variants } from 'framer-motion';
 
 export default function Hero() {
-  // --- Animation Configurations ---
-  // Added ": Variants" right here 👇
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
@@ -14,7 +12,6 @@ export default function Hero() {
     }
   };
 
-  // Added ": Variants" right here 👇
   const itemVariants: Variants = {
     hidden: { opacity: 0, y: 30 },
     visible: { 
@@ -40,8 +37,16 @@ export default function Hero() {
             className="text-4xl md:text-6xl font-extrabold text-gray-900 leading-tight mb-6 tracking-tight"
           >
             Welcome to <br/>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-600 to-teal-400 inline-block relative">
-              Vraj Homeopathic Clinic
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-600 to-teal-400 inline-block relative flex gap-3">
+              {/* ✨ THE PREMIUM SHEEN EFFECT ✨ */}
+              <motion.span
+                className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-teal-600 via-teal-300 to-teal-600 bg-[length:200%_auto]"
+                animate={{ backgroundPosition: ["0% center", "200% center"] }}
+                transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
+              >
+                Vraj
+              </motion.span> 
+              Homeopathic Clinic
               {/* Animated underline effect */}
               <motion.span 
                 initial={{ width: 0 }}

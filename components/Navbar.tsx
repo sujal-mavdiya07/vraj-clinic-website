@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -9,7 +10,6 @@ export default function Navbar() {
 
   const closeMenu = () => setIsOpen(false);
 
-  // This "listens" to the user's scroll position to trigger the shrink/glass effect
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 20) {
@@ -24,15 +24,17 @@ export default function Navbar() {
   }, []);
 
   return (
-    <nav 
-      className={`sticky top-0 z-50 transition-all duration-500 ease-in-out border-b ${
+    <motion.nav 
+      initial={{ y: -100, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+      className={`sticky top-0 z-50 transition-colors duration-500 ease-in-out border-b ${
         isScrolled 
           ? 'bg-teal-900/85 backdrop-blur-lg border-teal-700/50 shadow-xl' 
           : 'bg-teal-800 border-transparent shadow-md'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-        {/* Dynamic height based on scroll state */}
         <div className={`flex justify-between items-center transition-all duration-500 ease-in-out ${
           isScrolled ? 'h-16' : 'h-24'
         }`}>
@@ -50,17 +52,24 @@ export default function Navbar() {
                 />
               </div>
               
-              <span className={`font-extrabold text-white tracking-tight transition-all duration-500 group-hover:scale-105 origin-left ${
+              <span className={`font-extrabold tracking-tight flex gap-1.5 transition-all duration-500 group-hover:scale-105 origin-left ${
                 isScrolled ? 'text-lg sm:text-xl' : 'text-xl sm:text-2xl'
               }`}>
-                Vraj <span className="text-teal-400 drop-shadow-sm">Homeopathy</span>
+                {/* ✨ THE PREMIUM SHEEN EFFECT ✨ */}
+                <motion.span
+                  className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-white via-teal-200 to-white bg-[length:200%_auto]"
+                  animate={{ backgroundPosition: ["0% center", "200% center"] }}
+                  transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                >
+                  Vraj
+                </motion.span> 
+                <span className="text-teal-400 drop-shadow-sm">Homeopathy</span>
               </span>
             </Link>
           </div>
           
           {/* Desktop Menu */}
           <div className="hidden md:flex space-x-8 items-center">
-            {/* Animated Underline Links */}
             {['Home', 'About', 'Services', 'Blog'].map((item) => (
               <Link 
                 key={item}
@@ -79,16 +88,18 @@ export default function Navbar() {
               >
                 Online Consult
               </Link>
-              <Link 
-                href="/contact" 
-                className="bg-white text-teal-900 px-6 py-2.5 rounded-full font-black tracking-wide hover:bg-teal-50 hover:scale-105 hover:-translate-y-0.5 transition-all duration-300 shadow-[0_4px_14px_0_rgba(255,255,255,0.15)] hover:shadow-[0_6px_20px_rgba(255,255,255,0.3)]"
-              >
-                Book Appointment
-              </Link>
+              <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
+                <Link 
+                  href="/contact" 
+                  className="bg-white text-teal-900 px-6 py-2.5 rounded-full font-black tracking-wide shadow-[0_4px_14px_0_rgba(255,255,255,0.15)] hover:shadow-[0_6px_20px_rgba(255,255,255,0.3)] block"
+                >
+                  Book Appointment
+                </Link>
+              </motion.div>
             </div>
           </div>
 
-          {/* Mobile Menu Button (Animated Hamburger) */}
+          {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center">
             <button 
               onClick={() => setIsOpen(!isOpen)}
@@ -102,14 +113,14 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Mobile Menu (Floating Glass Card) */}
+        {/* Mobile Menu */}
         <div 
           className={`md:hidden absolute top-full left-4 right-4 mt-2 p-5 bg-teal-900/95 backdrop-blur-xl border border-teal-700/50 rounded-2xl shadow-2xl transition-all duration-400 ease-[cubic-bezier(0.4,0,0.2,1)] transform origin-top ${
             isOpen ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto' : 'opacity-0 scale-95 -translate-y-4 pointer-events-none'
           }`}
         >
           <div className="flex flex-col space-y-3">
-            {['Home', 'About', 'Services', 'Blog'].map((item, i) => (
+            {['Home', 'About', 'Services', 'Blog'].map((item) => (
               <Link 
                 key={item}
                 href={item === 'Home' ? '/' : `/${item.toLowerCase()}`} 
@@ -138,8 +149,7 @@ export default function Navbar() {
             </div>
           </div>
         </div>
-
       </div>
-    </nav>
+    </motion.nav>
   );
 }
