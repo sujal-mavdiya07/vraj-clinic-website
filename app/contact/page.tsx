@@ -18,27 +18,34 @@ export default function ContactPage() {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setStatus("submitting");
 
-    try {
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+    // 1. Format the message for WhatsApp
+    const message = `🚨 *New Appointment Request*\n\n` +
+      `*Patient Name:* ${formData.name}\n` +
+      `*Phone Number:* ${formData.phone}\n` +
+      `*Requested Date:* ${formData.date}\n` +
+      `*Consultation Type:* ${formData.consultationType}\n\n` +
+      `*Symptoms / Notes:*\n${formData.symptoms}\n\n` +
+      `_Sent securely via Vraj Clinic Website_`;
 
-      if (response.ok) {
-        setStatus("success");
-        setFormData({ name: "", phone: "", date: "", symptoms: "", consultationType: "In-Clinic" });
-      } else {
-        setStatus("error");
-      }
-    } catch (error) {
-      console.error("Submission failed", error);
-      setStatus("error");
-    }
+    // 2. Encode the message for a URL
+    const encodedMessage = encodeURIComponent(message);
+    
+    // 3. The Clinic's exact WhatsApp number
+    const clinicNumber = "916354380556"; 
+
+    // 4. Create the WhatsApp link and open it
+    const whatsappUrl = `https://wa.me/${clinicNumber}?text=${encodedMessage}`;
+    
+    // Open WhatsApp in a new tab/window
+    window.open(whatsappUrl, '_blank');
+
+    // Show success message on the website
+    setStatus("success");
+    setFormData({ name: "", phone: "", date: "", symptoms: "", consultationType: "In-Clinic" });
   };
 
   // --- Animation Variants ---
@@ -68,7 +75,6 @@ export default function ContactPage() {
         className="text-center mb-16"
       >
         <h1 className="text-4xl font-extrabold text-gray-900 mb-4 tracking-tight">
-          {/* ✨ THE PREMIUM SHEEN EFFECT ✨ */}
           <motion.span
             className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-teal-600 via-teal-300 to-teal-600 bg-[length:200%_auto]"
             animate={{ backgroundPosition: ["0% center", "200% center"] }}
@@ -115,7 +121,6 @@ export default function ContactPage() {
               <p className="text-red-500 font-medium mt-1">Sunday: By Appointment Only</p>
             </div>
 
-            {/* REAL GOOGLE MAP */}
             <div className="mt-8 w-full h-64 rounded-xl overflow-hidden shadow-inner border border-gray-200 relative group">
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2831.606418675771!2d70.24574807526398!3d21.295561480421387!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bfd51007723527f%3A0x633ef99041137d55!2sVraj%20homoeopathic%20clinic!5e1!3m2!1sen!2sin!4v1772897650670!5m2!1sen!2sin"
@@ -151,8 +156,8 @@ export default function ContactPage() {
               animate={{ scale: 1, opacity: 1 }}
               className="bg-green-50 text-green-800 p-6 rounded-lg border border-green-200 text-center"
             >
-              <h3 className="text-xl font-bold mb-2">Request Sent Successfully!</h3>
-              <p>Thank you. The clinic will contact you shortly to confirm your appointment time.</p>
+              <h3 className="text-xl font-bold mb-2">Redirecting to WhatsApp...</h3>
+              <p>Please hit "Send" in WhatsApp to confirm your appointment request with Dr. Shruti.</p>
               <button onClick={() => setStatus("idle")} className="mt-4 text-teal-600 font-semibold hover:underline">
                 Book another appointment
               </button>
@@ -194,18 +199,17 @@ export default function ContactPage() {
                 <textarea required id="symptoms" rows={4} value={formData.symptoms} onChange={handleChange} className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500 outline-none transition-colors text-gray-900" placeholder="How can Dr. Shruti help you?"></textarea>
               </div>
 
-              {status === "error" && (
-                <p className="text-red-500 text-sm font-medium">Something went wrong. Please check your terminal.</p>
-              )}
-
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 type="submit"
-                disabled={status === "submitting"}
-                className="w-full bg-teal-600 text-white font-bold py-3 px-4 rounded-md hover:bg-teal-700 transition-colors mt-4 shadow-md text-lg disabled:bg-gray-400"
+                className="w-full flex items-center justify-center gap-2 bg-[#25D366] text-white font-bold py-3 px-4 rounded-md hover:bg-[#128C7E] transition-colors mt-4 shadow-md text-lg"
               >
-                {status === "submitting" ? "Sending..." : "Submit Request"}
+                {/* Custom WhatsApp Icon */}
+                <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
+                </svg>
+                Send Request via WhatsApp
               </motion.button>
             </form>
           )}
